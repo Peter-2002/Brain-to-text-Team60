@@ -1,1 +1,5 @@
+Dataset can be downloaded from this link
 
+https://datadryad.org/dataset/doi:10.5061/dryad.dncjsxm85
+
+A brain-computer interface was implanted in a 45-year-old man with ALS to decode attempted speech from 256 intracortical electrodes. The system displayed decoded words on a screen and vocalized them using text-to-speech. After 30 minutes of initial calibration, it achieved 99.6% accuracy on a 50-word vocabulary, and with more training, reached 90–97% accuracy on a 125,000-word vocabulary over 8 months. The participant communicated at ~32 words per minute for over 248 hours, demonstrating that intracortical speech neuroprostheses can restore conversational communication with brief training.
