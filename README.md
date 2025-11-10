@@ -15,3 +15,94 @@ Discussion of strategies and questions can be done on the Kaggle Discussion tab.
 
 Link below is the research related to the competition
 www.kaggle.com/competitions/brain-to-text-25/overview/citation
+
+## Setup
+
+Install the dependencies into your preferred virtual environment:
+
+```bash
+pip install -r requirements.txt
+```
+
+All scripts assume that raw competition assets (`data_train.hdf5`, `data_val.hdf5`, `data_test.hdf5`) live under a local `data/` directory at the repository root:
+
+```
+Brain-to-text-Team60/
+├── data/
+│   ├── data_train.hdf5
+│   ├── data_val.hdf5
+│   └── data_test.hdf5
+```
+
+## Preprocessing
+
+`post_process_dataset/preprocess.py` converts the large HDF5 files into compressed `.npz` bundles that contain dense feature matrices plus the original transcripts.
+
+Example commands (mean-pooling features):
+
+```bash
+python post_process_dataset/preprocess.py \
+  --input data/data_train.hdf5 \
+  --output data/processed/train_meanpool.npz \
+  --method meanpool \
+  --window 20 \
+  --stride 20
+
+python post_process_dataset/preprocess.py \
+  --input data/data_val.hdf5 \
+  --output data/processed/val_meanpool.npz \
+  --method meanpool \
+  --window 20 \
+  --stride 20
+
+python post_process_dataset/preprocess.py \
+  --input data/data_test.hdf5 \
+  --output data/processed/test_meanpool.npz \
+  --method meanpool \
+  --window 20 \
+  --stride 20
+```
+
+You can switch to `--method spectral` for FFT-based power features or `--method flatten` to keep the raw timeseries.
+
+## Training baseline decoders
+
+Training is driven by YAML configuration files stored under `model_of_decoding/configs/`. Start with `baseline_knn.yaml` and adjust paths or hyperparameters as needed.
+
+```bash
+python model_of_decoding/train.py --config model_of_decoding/configs/baseline_knn.yaml
+```
+
+Artifacts are saved within the `output_dir` defined in the config:
+
+- `models/<model_name>.joblib`: serialized decoder.
+- `predictions/val_predictions.jsonl`: top-k validation candidates.
+- `metrics/validation_metrics.json`: WER and exact match statistics.
+
+## Generating a Kaggle submission
+
+After training, point the inference script at the processed test bundle and the saved model:
+
+```bash
+python model_of_decoding/predict.py \
+  --model-path outputs/baseline_knn/models/nearest_neighbor.joblib \
+  --feature-bundle data/processed/test_meanpool.npz \
+  --output submissions/nearest_neighbor_meanpool.csv \
+  --top-k 3 \
+  --candidates-json submissions/nearest_neighbor_candidates.jsonl
+```
+
+Upload the resulting CSV (`id,text` columns) to the Kaggle competition page.
+
+## Evaluation utilities
+
+`evaluation/wer.py` exposes reusable functions for computing Word Error Rate that match the public leaderboard metric. You can import `word_error_rate` inside notebooks or additional experiments.
+
+## Reporting checklist
+
+For the November 10 progress report, make sure the notebook or slide deck references:
+
+- Preprocessing variants tried and their rationale.
+- Models attempted (e.g., nearest-neighbor, logistic decoder) alongside runtime and validation WER.
+- Screenshots of public leaderboard submissions generated via the scripts above.
+- Planned next steps (hyperparameter sweeps, richer neural encoders, ensembling, etc.).

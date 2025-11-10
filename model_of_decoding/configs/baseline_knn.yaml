@@ -1,0 +1,19 @@
+data:
+  train_npz: data/processed/train_meanpool.npz
+  val_npz: data/processed/val_meanpool.npz
+  test_npz: data/processed/test_meanpool.npz
+  label_key: transcript
+  feature_key: features
+  index_key: indices
+
+model:
+  name: nearest_neighbor
+  params:
+    metric: cosine
+    n_neighbors: 5
+
+output_dir: outputs/baseline_knn
+random_state: 42
+top_k: 3
+save_embeddings: false
+
