@@ -30,8 +30,7 @@
 - Inference & submission: `python model_of_decoding/predict.py --model-path outputs/<run>/models/<model>.joblib --feature-bundle data/processed/test_meanpool.npz --output submissions/<run>.csv`
 
 ## 3. Public Leaderboard Evidence
-- Placeholder: insert screenshot of Kaggle submission once `submissions/<run>.csv` is uploaded.
-- Recommended naming: `Team60_meanpool_knn.csv` to match competition rules.
+- NEED TO BE ADDED
 
 ## 4. Reflections & Next Steps
 - The new pipeline modularizes feature extraction and modeling, enabling quick sweeps over methods without notebook duplication.
